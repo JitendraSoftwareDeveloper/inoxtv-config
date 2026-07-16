@@ -1,8 +1,8 @@
 {
-  "minVersionCode": 10006,
-  "minVersionName": "1.0.6",
+  "minVersionCode": 10007,
+  "minVersionName": "1.0.7",
   "updateUrl": "market://details?id=in.inoxtv.mobile",
   "updateUrlTv": "market://details?id=in.inoxtv.tv",
-  "message": "A new version 1.0.6 is required to continue.",
+  "message": "Please Update with Stable Version 1.0.7, Inhanced UI, NEW Features added and many more.",
   "enabled": true
 }
