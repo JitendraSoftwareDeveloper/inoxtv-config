@@ -127,7 +127,7 @@
     "master_enabled": true,
 
     "reward_gates": "movies,shows,search,record,addplaylist,theme",
-    "reward_unlock_hours": 6,
+    "reward_unlock_hours": 3,
 
     "slots": {
       "unlock_rew": {
@@ -135,7 +135,7 @@
         "format": "Rewarded",
         "phase": 1,
         "enabled": true,
-        "live": "ca-app-pub-6161953663322185/2074917387",
+        "live": "ca-app-pub-6161953663322185/2263704786",
         "test": "ca-app-pub-3940256099942544/5224354917",
         "_note": "The feature gates listed in reward_gates. Never a paywall: if this slot goes quiet the gate opens rather than locking the user out."
       },
@@ -144,7 +144,7 @@
         "format": "App Open",
         "phase": 1,
         "enabled": true,
-        "live": "ca-app-pub-6161953663322185/3691251387",
+        "live": "ca-app-pub-6161953663322185/4380450867",
         "test": "ca-app-pub-3940256099942544/9257395921",
         "min_interval_s": 240,
         "_note": "Shown on a real return to the foreground only. Never on first launch, never on rotation, never on internal navigation, and never over a return the app itself asked for (external player, file picker, consent form, store)."
@@ -154,7 +154,7 @@
         "format": "Interstitial",
         "phase": 1,
         "enabled": true,
-        "live": "ca-app-pub-6161953663322185/9159200483",
+        "live": "ca-app-pub-6161953663322185/3067369199",
         "test": "ca-app-pub-3940256099942544/1033173712",
         "max_per_session": 4,
         "_note": "Leaving a fullscreen player — live TV, movies, shows. The player exits first and the ad opens over the screen behind it, so the user is never held in fullscreen waiting on an ad. max_per_session 0 or missing means never."
@@ -164,7 +164,7 @@
         "format": "Interstitial",
         "phase": 2,
         "enabled": false,
-        "live": "ca-app-pub-6161953663322185/2924964620",
+        "live": "ca-app-pub-6161953663322185/9759051425",
         "test": "ca-app-pub-3940256099942544/1033173712",
         "max_per_session": 3,
         "_note": "IMPLEMENTED but switched off. Flip enabled to true to start showing it, no release needed. Fires only on a real sidebar section change, never on re-selecting the section already open."
@@ -175,7 +175,7 @@
         "phase": 1,
         "console_refresh_s": 60,
         "enabled": true,
-        "live": "ca-app-pub-6161953663322185/2046112742",
+        "live": "ca-app-pub-6161953663322185/1880561404",
         "test": "ca-app-pub-3940256099942544/9214589741",
         "_note": "Serves the live-TV browse band AND the live-TV fullscreen band. They are the same physical band, kept on one unit so toggling fullscreen does not throw away a loaded ad."
       },
@@ -185,7 +185,7 @@
         "phase": 1,
         "console_refresh_s": 60,
         "enabled": true,
-        "live": "ca-app-pub-6161953663322185/5250860585",
+        "live": "ca-app-pub-6161953663322185/9567479734",
         "test": "ca-app-pub-3940256099942544/9214589741",
         "_note": "Movies, Shows, Recordings and My List browse bands."
       },
@@ -195,7 +195,7 @@
         "phase": 1,
         "console_refresh_s": 60,
         "enabled": true,
-        "live": "ca-app-pub-6161953663322185/5578822788",
+        "live": "ca-app-pub-6161953663322185/1130586516",
         "test": "ca-app-pub-3940256099942544/9214589741",
         "_note": "Movies and Shows fullscreen players only. Live-TV fullscreen is served by livetv_browse_banner instead — see its note."
       },
@@ -205,7 +205,7 @@
         "phase": 1,
         "console_refresh_s": 60,
         "enabled": true,
-        "live": "ca-app-pub-6161953663322185/8389044297",
+        "live": "ca-app-pub-6161953663322185/5562882040",
         "test": "ca-app-pub-3940256099942544/9214589741",
         "_note": "The whole playlist-setup flow — welcome home, the type picker, and the M3U, Xtream, Stalker and EPG form pages. Six screens on one unit on purpose: they are the lowest-volume placements in the app and the user sees exactly one at a time, so splitting them would divide the impressions that teach AdMob what this inventory is worth. The delete-confirm page carries no band and never will, because a banner beside a destructive button is a mis-tap trap."
       },
@@ -215,7 +215,7 @@
         "phase": 1,
         "console_refresh_s": 60,
         "enabled": true,
-        "live": "",
+        "live": "ca-app-pub-6161953663322185/4193960055",
         "test": "ca-app-pub-3940256099942544/9214589741",
         "_note": "LIVE ID MISSING. Create a NEW unit in the AdMob console under app ~4018635620 with format Banner — the old INX_MOB_NAT_PLAYLIST_PROCESSING is a Native unit and can never serve here — set Automatically refresh to 60 seconds, then paste its ca-app-pub-6161953663322185/... ID into live above. Until then this slot serves demo ads in debug and nothing in release. The app code, the band and the layout are already in place and waiting on this one string."
       }
