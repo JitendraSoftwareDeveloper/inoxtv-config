@@ -1,0 +1,210 @@
+{
+  "_readme": [
+    "InoxTv AdMob (GMA) remote config — ONE file, both apps.",
+    "Host at: https://jitendrasoftwaredeveloper.github.io/inoxtv-config/inoxtv-admob.json",
+    "",
+    "preroll.json is a DIFFERENT file and belongs to the IMA / VAST / VMAP live-TV path.",
+    "Nothing in this file touches it, reads it, or can affect an IMA ad.",
+    "",
+    "SWITCHES, widest first — each one is a single edit, no app release:",
+    "  1. master_enabled ............... false = no GMA ad anywhere, both apps, all build types",
+    "  2. debug_ads_enabled ........... false = no GMA ad in DEBUG builds, both apps",
+    "  3. <platform>.master_enabled ... false = that one app goes silent, the other keeps running",
+    "  4. slots.<name>.enabled ........ false = that one placement goes silent",
+    "",
+    "allow_test_units_in_release: true = RELEASE builds serve Google DEMO ads instead of your real ones.",
+    "  It reads slots.<name>.test directly, so live is never touched and there is nothing to revert but",
+    "  this one boolean. Use it ONLY for the R8 / minified-APK check, then set it back to false.",
+    "  Left true in production it earns exactly ZERO while every ad still displays perfectly. It is the",
+    "  one key in this file whose wrong value costs money rather than just showing nothing.",
+    "",
+    "An empty live is NOT a kill switch. Once real IDs are compiled into the app as the fetch-failure",
+    "  fallback, an empty live falls through to the compiled ID and serves a real ad. To silence a",
+    "  placement for certain, use enabled:false. Empty live shows nothing only while no real unit exists.",
+    "",
+    "publisher and app_id here are DOCUMENTATION for whoever hand-edits this file. The resolver must",
+    "  validate unit IDs against a COMPILED-IN publisher prefix, never against the publisher field in",
+    "  this same file — a document checked against itself is not checked. Neither value is a secret:",
+    "  both already ship in plain text inside every APK, and app-ads.txt publishes the publisher on",
+    "  purpose. Never put anything that authenticates in here (AdMob API/OAuth, service accounts, keys).",
+    "",
+    "SLOT KEY vs name — two different naming systems, joined only by the ID:",
+    "  the slot KEY (player_fullscreen_banner) is what the app's code reads. Renaming it is a code",
+    "    change, so it never changes.",
+    "  name (INX_MOB_BAN_PLAYER_FULLSCREEN) is only the label you typed into the AdMob console. NO",
+    "    code reads it. Rename it in the console whenever you like — the app cannot tell. It sits here",
+    "    so this file alone tells you which console unit's ID belongs in which live field.",
+    "  format = what to pick at the console's 'Ad format' step. phase = rollout stage, so create the",
+    "    phase 1 units first and ignore the rest. Both are documentation, same as publisher/app_id.",
+    "",
+    "TEST vs LIVE — keep BOTH, never overwrite one with the other:",
+    "  test = Google's demo unit. Always fills, never touches your account, safe to click.",
+    "  live = your real unit from the AdMob console. Paste it in; leave test where it is.",
+    "  Overwriting test with live means a debug build can never show an ad again, and the next",
+    "  4dp banner tweak would need a release build to verify.",
+    "",
+    "CURRENT STATE = test phase. test filled, live empty, debug_ads_enabled true.",
+    "  Release builds show NOTHING right now, because every live is empty.",
+    "  Debug builds show Google test ads on the Phase-1 slots.",
+    "  When testing is finished: set debug_ads_enabled to false. That is the one key.",
+    "",
+    "GO-LIVE, when the real units exist:",
+    "  a. paste each real ID into its live field (never over test)",
+    "  b. set debug_ads_enabled false, and CONFIRM allow_test_units_in_release is false",
+    "  c. empty reward_gates, then re-enable gates ONE at a time and watch the numbers",
+    "",
+    "TWO REWARDED UNITS, NOT ONE. mobile.slots.unlock_rew.live and tv.slots.unlock_rew.live are",
+    "different inventory under different AdMob apps. Pasting the same ID into both would",
+    "mis-attribute every impression in the account. The demo ID is legitimately the same string",
+    "in both — only the live IDs differ.",
+    "",
+    "reward_gates: comma list from movies,shows,search,record,addplaylist,theme. Empty = no gate",
+    "is active even when unlock_rew is enabled, so every feature stays free.",
+    "reward_unlock_hours: clamped to 1-720 in code. 0, negative, or unparseable falls back to 6 —",
+    "an unclamped 0 would re-lock the feature the instant the ad finished.",
+    "",
+    "New ad units return error code 3 (no fill) for a few hours up to ~24h after creation.",
+    "That is not a bug. Wait it out."
+  ],
+
+  "version": 1,
+  "updated": "2026-08-25",
+  "publisher": "6161953663322185",
+
+  "master_enabled": true,
+  "debug_ads_enabled": true,
+  "allow_test_units_in_release": false,
+
+  "mobile": {
+    "app_id": "ca-app-pub-6161953663322185~4018635620",
+    "master_enabled": true,
+
+    "reward_gates": "movies,shows,search,record,addplaylist,theme",
+    "reward_unlock_hours": 6,
+
+    "slots": {
+      "unlock_rew": {
+        "name": "INX_MOB_REW_UNLOCK",
+        "format": "Rewarded",
+        "phase": 1,
+        "enabled": true,
+        "live": "ca-app-pub-6161953663322185/2074917387",
+        "test": "ca-app-pub-3940256099942544/5224354917"
+      },
+      "player_fullscreen_banner": {
+        "name": "INX_MOB_BAN_PLAYER_FULLSCREEN",
+        "format": "Banner (adaptive anchored)",
+        "phase": 1,
+        "console_refresh_s": 60,
+        "enabled": true,
+        "live": "ca-app-pub-6161953663322185/5578822788",
+        "test": "ca-app-pub-3940256099942544/9214589741"
+      },
+      "app_open": {
+        "name": "INX_MOB_APPOPEN_RESUME",
+        "format": "App Open",
+        "phase": 1,
+        "enabled": true,
+        "live": "ca-app-pub-6161953663322185/3691251387",
+        "test": "ca-app-pub-3940256099942544/9257395921",
+        "min_interval_s": 240
+      },
+      "fullscreen_exit_int": {
+        "name": "INX_MOB_INT_FULLSCREEN_EXIT",
+        "format": "Interstitial",
+        "phase": 1,
+        "enabled": true,
+        "live": "ca-app-pub-6161953663322185/9159200483",
+        "test": "ca-app-pub-3940256099942544/1033173712",
+        "max_per_session": 4
+      },
+      "livetv_browse_banner": {
+        "name": "INX_MOB_BAN_LIVETV_BROWSE",
+        "format": "Banner (adaptive anchored)",
+        "phase": 1,
+        "console_refresh_s": 60,
+        "enabled": true,
+        "live": "ca-app-pub-6161953663322185/2046112742",
+        "test": "ca-app-pub-3940256099942544/9214589741"
+      },
+      "catalog_browse_banner": {
+        "name": "INX_MOB_BAN_CATALOG_BROWSE",
+        "format": "Banner (adaptive anchored)",
+        "phase": 1,
+        "console_refresh_s": 60,
+        "enabled": true,
+        "live": "ca-app-pub-6161953663322185/5250860585",
+        "test": "ca-app-pub-3940256099942544/9214589741"
+      },
+      "player_pause_native": {
+        "name": "INX_MOB_NAT_PLAYER_PAUSE",
+        "format": "Native",
+        "phase": 2,
+        "enabled": false,
+        "live": "ca-app-pub-6161953663322185/1440492568",
+        "test": "ca-app-pub-3940256099942544/2247696110"
+      },
+      "playlist_processing_native": {
+        "name": "INX_MOB_NAT_PLAYLIST_PROCESSING",
+        "format": "Native",
+        "phase": 2,
+        "enabled": false,
+        "live": "ca-app-pub-6161953663322185/1360601519",
+        "test": "ca-app-pub-3940256099942544/2247696110"
+      },
+      "onboarding_banner": {
+        "name": "INX_MOB_BAN_ONBOARDING",
+        "format": "Banner (adaptive anchored)",
+        "phase": 2,
+        "console_refresh_s": 60,
+        "enabled": false,
+        "live": "ca-app-pub-6161953663322185/8389044297",
+        "test": "ca-app-pub-3940256099942544/9214589741"
+      },
+      "section_switch_int": {
+        "name": "INX_MOB_INT_SECTION_SWITCH",
+        "format": "Interstitial",
+        "phase": 2,
+        "enabled": false,
+        "live": "ca-app-pub-6161953663322185/2924964620",
+        "test": "ca-app-pub-3940256099942544/1033173712",
+        "max_per_session": 3
+      },
+      "catalog_grid_native": {
+        "name": "INX_MOB_NAT_CATALOG_GRID",
+        "format": "Native",
+        "phase": 3,
+        "enabled": false,
+        "live": "ca-app-pub-6161953663322185/2784479346",
+        "test": "ca-app-pub-3940256099942544/2247696110"
+      },
+      "vod_entry_rewint": {
+        "name": "INX_MOB_REWINT_VOD_ENTRY",
+        "format": "Rewarded Interstitial",
+        "phase": 3,
+        "enabled": false,
+        "live": "ca-app-pub-6161953663322185/7239614153",
+        "test": "ca-app-pub-3940256099942544/5354046379"
+      }
+    }
+  },
+
+  "tv": {
+    "app_id": "ca-app-pub-6161953663322185~4860944005",
+    "master_enabled": true,
+
+    "reward_gates": "movies,shows,search,record,addplaylist,theme",
+    "reward_unlock_hours": 3,
+
+    "slots": {
+      "unlock_rew": {
+        "name": "INX_TV_REW_UNLOCK",
+        "format": "Rewarded",
+        "phase": 1,
+        "enabled": true,
+        "live": "ca-app-pub-6161953663322185/3850149008",
+        "test": "ca-app-pub-3940256099942544/5224354917"
+      }
+    }
+  }
+}
