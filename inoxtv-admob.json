@@ -122,7 +122,7 @@
 
   "mobile": {
     "app_id": "ca-app-pub-6161953663322185~4018635620",
-    "master_enabled": false,
+    "master_enabled": true,
 
     "reward_gates": "movies,shows,search,record,addplaylist,theme",
     "reward_unlock_hours": 3,
