@@ -232,7 +232,7 @@
         "name": "INX_TV_REW_UNLOCK",
         "format": "Rewarded",
         "phase": 1,
-        "enabled": false,
+        "enabled": true,
         "live": "ca-app-pub-6161953663322185/3850149008",
         "test": "ca-app-pub-3940256099942544/5224354917",
         "_note": "The ONLY ad the TV app serves, by design. TV has no banner, no app-open and no interstitial: the TV host returns null for attachBanner and calls onDone straight through for interstitials, so a banner or interstitial slot added to this section would be parsed and then ignored."
