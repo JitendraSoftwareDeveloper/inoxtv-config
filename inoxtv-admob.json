@@ -192,7 +192,7 @@
         "format": "Banner (adaptive anchored)",
         "phase": 1,
         "console_refresh_s": 60,
-        "enabled": true,
+        "enabled": false,
         "live": "ca-app-pub-6161953663322185/1130586516",
         "test": "ca-app-pub-3940256099942544/9214589741",
         "_note": "Movies and Shows fullscreen players only. Live-TV fullscreen is served by livetv_browse_banner instead — see its note."
