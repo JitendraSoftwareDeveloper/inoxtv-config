@@ -72,15 +72,13 @@
     "  Overwriting test with live means a debug build can never show an ad again, and the next",
     "  4dp banner tweak would need a release build to verify.",
     "",
-    "CURRENT STATE (2026-08-26) = LIVE. Real IDs are in place on every slot but one.",
+    "CURRENT STATE (2026-08-26) = LIVE. Real IDs are in place on every slot.",
     "  debug_ads_enabled is true, so DEBUG builds serve Google demo ads and RELEASE builds serve the",
     "  real units. A debug build can never reach a live unit whatever this file says: the resolver",
     "  returns test whenever BuildConfig.DEBUG, before live is even looked at. Setting",
     "  debug_ads_enabled false therefore silences debug builds only, and does not touch release.",
-    "  ONE live field is empty — mobile.slots.playlist_processing_banner — because that console unit",
-    "  does not exist yet. It serves demo ads in debug and nothing in release until the ID is pasted",
-    "  in. Playlist processing is the longest-dwell screen in the mobile app, so that one paste is the",
-    "  single highest-value edit left in this file.",
+    "  Every live field is filled, mobile and TV alike, so no slot here is waiting on console work.",
+    "  playlist_processing_banner was the last to land.",
     "  ONE slot is deliberately off — section_switch_int. It is fully implemented; flipping enabled to",
     "  true starts showing it with no release.",
     "",
@@ -217,7 +215,7 @@
         "enabled": true,
         "live": "ca-app-pub-6161953663322185/4193960055",
         "test": "ca-app-pub-3940256099942544/9214589741",
-        "_note": "LIVE ID MISSING. Create a NEW unit in the AdMob console under app ~4018635620 with format Banner — the old INX_MOB_NAT_PLAYLIST_PROCESSING is a Native unit and can never serve here — set Automatically refresh to 60 seconds, then paste its ca-app-pub-6161953663322185/... ID into live above. Until then this slot serves demo ads in debug and nothing in release. The app code, the band and the layout are already in place and waiting on this one string."
+        "_note": "The playlist-processing screen — the longest-dwell screen in the app, because importing a large M3U or Xtream playlist takes minutes. On its own unit rather than sharing onboarding_banner's because AdMob prices a unit on the behaviour it sees, and mixing a several-minute screen in with six screens the user passes through in seconds would teach it the wrong thing about both."
       }
     }
   },
