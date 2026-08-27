@@ -116,9 +116,9 @@
   "updated": "2026-08-26",
   "publisher": "6161953663322185",
 
-  "master_enabled": false,
+  "master_enabled": true,
   "debug_ads_enabled": false,
-  "allow_test_units_in_release": false,
+  "allow_test_units_in_release": true,
 
   "mobile": {
     "app_id": "ca-app-pub-6161953663322185~4018635620",
