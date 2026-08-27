@@ -4,6 +4,6 @@
   "updateUrl": "market://details?id=in.inoxtv.mobile",
   "updateUrlTv": "market://details?id=in.inoxtv.tv",
   "updateUrlFallback": "https://inoxtv.com",
-  "message": "Please update with new version 1.0.8, Recording, Theme and more new features added.",
+  "message": "A new version 1.0.8 is required to continue.",
   "enabled": true
 }
