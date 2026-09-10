@@ -125,7 +125,7 @@
     "master_enabled": true,
 
     "reward_gates": "movies,shows,search,record,addplaylist,theme",
-    "reward_unlock_hours": 1,
+    "reward_unlock_hours": 3,
 
     "slots": {
       "unlock_rew": {
@@ -225,7 +225,7 @@
     "master_enabled": true,
 
     "reward_gates": "movies,shows,search,record,addplaylist,theme",
-    "reward_unlock_hours": 1,
+    "reward_unlock_hours": 3,
 
     "slots": {
       "unlock_rew": {
