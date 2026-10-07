@@ -117,7 +117,7 @@
   "publisher": "6161953663322185",
 
   "master_enabled": true,
-  "debug_ads_enabled": false,
+  "debug_ads_enabled": true,
   "allow_test_units_in_release": false,
 
   "mobile": {
@@ -175,7 +175,7 @@
         "enabled": true,
         "live": "ca-app-pub-6161953663322185/1880561404",
         "test": "ca-app-pub-3940256099942544/9214589741",
-        "_note": "Serves the live-TV browse band AND the live-TV fullscreen band. They are the same physical band, kept on one unit so toggling fullscreen does not throw away a loaded ad."
+        "_note": "The live-TV BROWSE band only, at 100 dp: the channel list, the guide and the small preview player. Live TV in FULLSCREEN is NOT this unit — it is player_fullscreen_banner, at 50 dp. They are still the same physical view (ad_band_live_tv), and FullscreenModeBinder rebinds it from one slot to the other on every fullscreen toggle, which is why toggling costs one ad request. Consequence for reading this file: impressions here are browse impressions only."
       },
       "catalog_browse_banner": {
         "name": "INX_MOB_BAN_CATALOG_BROWSE",
@@ -195,7 +195,7 @@
         "enabled": true,
         "live": "ca-app-pub-6161953663322185/1130586516",
         "test": "ca-app-pub-3940256099942544/9214589741",
-        "_note": "Movies and Shows fullscreen players only. Live-TV fullscreen is served by livetv_browse_banner instead — see its note."
+        "_note": "Every band drawn over a video, at 50 dp: live TV in fullscreen (which arrives here when the mode toggles — see livetv_browse_banner), the Movies and Shows fullscreen players, and the recording player. Highest-volume placement in the app, and the only one that shares a surface with the picture."
       },
       "onboarding_banner": {
         "name": "INX_MOB_BAN_ONBOARDING",
