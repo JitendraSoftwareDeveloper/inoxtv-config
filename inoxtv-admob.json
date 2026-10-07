@@ -7,12 +7,10 @@
     "Nothing in this file touches it, reads it, or can affect an IMA ad.",
     "",
     "SWITCHES, widest first — each one is a single edit, no app release:",
-    "  1. master_enabled ............... false = this file serves no ad, both apps, all build types",
-    "  2. debug_ads_enabled ........... false = no ad from this file in DEBUG builds, both apps",
+    "  1. master_enabled ............... false = no GMA ad anywhere, both apps, all build types",
+    "  2. debug_ads_enabled ........... false = no GMA ad in DEBUG builds, both apps",
     "  3. <platform>.master_enabled ... false = that one app goes silent, the other keeps running",
     "  4. slots.<name>.enabled ........ false = that one placement goes silent",
-    "These four silence ADMOB. None of them silences inoxtv-adx.json, and none of them lifts the",
-    "reward gates — see reward_gates below.",
     "A slot key the app asks for but this file does not contain behaves exactly like enabled:false.",
     "",
     "THIS FILE HOLDS EXACTLY WHAT THE APP ASKS FOR — 9 mobile keys, 1 TV key, nothing else.",
@@ -104,16 +102,11 @@
     "",
     "reward_gates: comma list from movies,shows,search,record,addplaylist,theme. Empty = no gate",
     "is active even when unlock_rew is enabled, so every feature stays free.",
-    "  This list is read whatever the switches above say. Turning master_enabled, a platform switch or",
-    "  unlock_rew off stops the ADMOB ad; it does not turn the gate off, because an Ad Manager ad from",
-    "  inoxtv-adx.json opens the same gate. A gate lifts only when no ad of any kind can be shown,",
-    "  which the app decides from the live ad buffer and not from this file.",
     "reward_unlock_hours: clamped to 1-720 in code. 0, negative, or unparseable falls back to 6 —",
     "an unclamped 0 would re-lock the feature the instant the ad finished.",
-    "  mobile and tv hold this value INDEPENDENTLY — the two sections never read each other. Both are",
-    "  currently 3. They do not have to match: separate them if a TV user should re-watch more or less",
-    "  often than a phone user for the same feature. This window applies to an unlock earned on an Ad",
-    "  Manager ad too, so the number here is the one that governs both sources.",
+    "  mobile and tv hold this value INDEPENDENTLY. Today mobile is 6 and tv is 3, so a TV user",
+    "  re-watches an ad twice as often as a phone user for the same feature. That is a real product",
+    "  difference rather than a default — if it was not intended, set tv to 6 here.",
     "",
     "New ad units return error code 3 (no fill) for a few hours up to ~24h after creation.",
     "That is not a bug. Wait it out."
@@ -124,7 +117,7 @@
   "publisher": "6161953663322185",
 
   "master_enabled": true,
-  "debug_ads_enabled": true,
+  "debug_ads_enabled": false,
   "allow_test_units_in_release": false,
 
   "mobile": {
@@ -182,7 +175,7 @@
         "enabled": true,
         "live": "ca-app-pub-6161953663322185/1880561404",
         "test": "ca-app-pub-3940256099942544/9214589741",
-        "_note": "The live-TV BROWSE band only, at 100 dp: the channel list, the guide and the small preview player. Live TV in FULLSCREEN is NOT this unit — it is player_fullscreen_banner, at 50 dp. They are still the same physical view (ad_band_live_tv), and FullscreenModeBinder rebinds it from one slot to the other on every fullscreen toggle, which is why toggling costs one ad request. Consequence for reading this file: impressions here are browse impressions only."
+        "_note": "Serves the live-TV browse band AND the live-TV fullscreen band. They are the same physical band, kept on one unit so toggling fullscreen does not throw away a loaded ad."
       },
       "catalog_browse_banner": {
         "name": "INX_MOB_BAN_CATALOG_BROWSE",
@@ -202,7 +195,7 @@
         "enabled": true,
         "live": "ca-app-pub-6161953663322185/1130586516",
         "test": "ca-app-pub-3940256099942544/9214589741",
-        "_note": "Every band drawn over a video, at 50 dp: live TV in fullscreen (which arrives here when the mode toggles — see livetv_browse_banner), the Movies and Shows fullscreen players, and the recording player. Highest-volume placement in the app, and the only one that shares a surface with the picture."
+        "_note": "Movies and Shows fullscreen players only. Live-TV fullscreen is served by livetv_browse_banner instead — see its note."
       },
       "onboarding_banner": {
         "name": "INX_MOB_BAN_ONBOARDING",
