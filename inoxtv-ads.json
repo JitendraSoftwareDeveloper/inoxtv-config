@@ -384,7 +384,7 @@
 
   "tv": {
     "master_enabled": true,
-    "debug_ads_enabled": false,
+    "debug_ads_enabled": true,
 
     "reward_gates": "movies,shows,search,record,addplaylist,theme",
     "reward_unlock_hours": 1,
