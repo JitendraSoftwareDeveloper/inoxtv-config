@@ -1,0 +1,412 @@
+{
+  "_readme": [
+    "InoxTv ads config — ONE file, both apps, both ad networks, on the GMA Next-Gen SDK.",
+    "Host at: https://jitendrasoftwaredeveloper.github.io/inoxtv-config/inoxtv-ads.json",
+    "",
+    "READ BY APP 1.1.0 AND LATER. App 1.0.9 in the field reads the OLD file (inoxtv-admob.json)",
+    "  and cannot see this one. The old file must stay published exactly as it is so 1.0.9 keeps",
+    "  serving; nothing here can change what a 1.0.9 install does.",
+    "  Consequence to accept knowingly: until 1.0.9 is retired, an AdMob unit change that must",
+    "  reach BOTH versions has to be made in both files. Changes that only matter going forward go",
+    "  here only.",
+    "",
+    "preroll.json is a DIFFERENT file and belongs to the IMA / VAST / VMAP live-TV path. Nothing in",
+    "  this file touches it, reads it, or can affect an IMA ad.",
+    "",
+    "THE ONE IDEA — every slot has TWO ad sources, adx (Google Ad Manager) and admob, and the",
+    "  top-level priority list decides which is asked first:",
+    "    priority: [adx, admob]  = Ad Manager first, AdMob catches anything Ad Manager cannot fill",
+    "  A source that is switched off, absent, or has no unit for that slot is skipped and the next",
+    "  source in the list is asked. Reorder this one list to change priority across the whole app —",
+    "  no other edit, no app release. A list holding one source serves that source only, with no",
+    "  fallback at all.",
+    "",
+    "FALLBACK HAPPENS AT REQUEST TIME, NOT ONLY AT CONFIG TIME: the app asks the first source's unit",
+    "  and, when that request fails or comes back with no fill, asks the next source's unit for the",
+    "  same placement. The SDK caps preloaded ads at 6 app-wide across every format and preload ID,",
+    "  so on a preloaded format (rewarded, interstitial, app open) the fallback may be a request made",
+    "  at that moment rather than a standing second preload — a little slower than the first source",
+    "  would have been, and never a blank screen. Banners fall back the same way.",
+    "",
+    "SWITCHES, widest first — each one is a single edit, no app release:",
+    "  1. master_enabled ........................ false = no ad anywhere, both networks, both apps",
+    "  2. sources.<adx|admob>.master_enabled .... false = that one NETWORK goes silent everywhere,",
+    "     and the other network keeps serving through the priority list",
+    "  3. <platform>.master_enabled ............. false = that one APP goes silent, the other keeps",
+    "     running. mobile and tv are independent in every respect.",
+    "  4. debug_ads_enabled / allow_test_units_in_release, at the global, per-source and per-app",
+    "     level. Wherever one of these keys is present it must be true as well, so a single stray",
+    "     true cannot change one network on its own. A debug key can only ever REMOVE test ads from a",
+    "     debug build; a test-in-release key is the one switch whose wrong value earns nothing while",
+    "     every ad still looks perfect — see the recipes further down.",
+    "  5. <platform>.slots.<key>.enabled ........ false = that one placement goes silent everywhere",
+    "  6. <platform>.slots.<key>.<src>.enabled .. false = that placement is not served by that one",
+    "     network; the other source still serves it",
+    "A slot key the app asks for but this file does not contain behaves exactly like enabled:false.",
+    "An unknown source name inside a slot is ignored. Unknown keys anywhere are ignored, so this",
+    "  file can gain keys later without breaking an app already installed in the field.",
+    "",
+    "WHAT THE CODE ACTUALLY READS. Everything else here is documentation for whoever edits the file:",
+    "  top level ..... master_enabled, debug_ads_enabled, allow_test_units_in_release, priority,",
+    "                  sources, mobile, tv",
+    "  sources.<src> . master_enabled, debug_ads_enabled, allow_test_units_in_release",
+    "  per platform .. master_enabled, debug_ads_enabled, reward_gates, reward_unlock_hours, slots",
+    "  per slot ...... enabled, min_interval_s (app_open only), max_per_session (interstitial only),",
+    "                  adx.enabled, adx.live, adx.test, admob.enabled, admob.live, admob.test",
+    "  NOT read ...... version, updated, publisher, mobile_app_id, tv_app_id, name, format, phase,",
+    "                  console_refresh_s, _note, _readme",
+    "  console_refresh_s is the value set on the ad unit in the network's console, recorded here so",
+    "    this one file tells the whole story. The app cannot change a banner's refresh rate, so",
+    "    editing that number here changes nothing — change it on the unit in the console.",
+    "",
+    "EVERY DEFAULT IS THE QUIET ONE. A missing or misspelled enabled reads as false, a missing",
+    "  max_per_session reads as 0 = never, a missing master_enabled reads as false. A file that",
+    "  loses a key goes silent, never loud. A missing priority list falls back to adx then admob; an",
+    "  empty one serves the first source only. The one deliberate exception is reward_gates: an empty",
+    "  or missing value means NO gate is active, because a broken config must never lock a user out",
+    "  of a feature. Ads fail towards showing less; gates fail towards giving more.",
+    "",
+    "AN EMPTY OR MISSING live IS NOT A KILL SWITCH — it means that source has no unit for that slot,",
+    "  so the next source in the priority list is asked instead. That is the per-slot rollout lever: a",
+    "  slot whose adx.live is cleared is served by AdMob alone, with no other edit and no release.",
+    "  Every adx.live below is filled with this network's real path, so Ad Manager is asked first",
+    "  everywhere it has a unit; clearing one field hands that one placement back to AdMob, and",
+    "  clearing all of them returns the app to exactly what 1.0.9 serves today. To silence a",
+    "  placement for certain, use enabled:false.",
+    "",
+    "TEST vs LIVE — keep BOTH, never overwrite one with the other:",
+    "  test = the network's demo unit. AdMob: ca-app-pub-3940256099942544/... . Ad Manager:",
+    "    /21775744923/example/... . Both always fill, neither touches your account, both are safe to",
+    "    click — which is exactly why they are the only units a debug build may ever request.",
+    "  live = your real unit. AdMob: ca-app-pub-6161953663322185/<unit>. Ad Manager:",
+    "    /22853635592/Inoxtv-app-Ad-Units/<unitName> — the ad unit's full path in Ad Manager: network",
+    "    22853635592, ad unit tree Inoxtv-app-Ad-Units, and that slot's name as the leaf.",
+    "  Overwriting test with live means a debug build can never show an ad again, and the next 4 dp",
+    "    banner tweak would need a release build to verify.",
+    "",
+    "debug_ads_enabled and allow_test_units_in_release — GLOBAL *AND* PER NETWORK, and every level",
+    "  that is present must be true. A stray true on one source therefore cannot change that network",
+    "  on its own, and the global key stays a real master switch. The recipes:",
+    "    both networks in test mode ....... allow_test_units_in_release: true; the source keys left",
+    "                                      alone",
+    "    Ad Manager only in test mode ..... global allow_test_units_in_release: true,",
+    "                                      sources.adx.allow_test_units_in_release: true,",
+    "                                      sources.admob.allow_test_units_in_release: false",
+    "    one network, debug build ......... sources.<src>.debug_ads_enabled: false",
+    "    one app, debug build ............. <platform>.debug_ads_enabled: false",
+    "  The per-network test key is what lets a release-path check — the R8 / minified-APK pass — point",
+    "  ONE network at its demo units while the other keeps earning. Its risk is real and worth naming:",
+    "  it is the one value in this file whose wrong setting earns NOTHING while every ad still displays",
+    "  perfectly. A true left behind is invisible on screen and expensive in production, so set it back",
+    "  to false the moment the check is done.",
+    "  The debug keys are safe by construction: they can only REMOVE test ads from a debug build, never",
+    "  make a debug build request a production unit. Ads never fall through to live in a debug build",
+    "  either — those would be self-made impressions on your own account, which the networks treat as",
+    "  invalid traffic. An empty test unit therefore means that source is SKIPPED in debug, the",
+    "  debug-side twin of an empty live in release.",
+    "  What that adds up to today: mobile debug serves test ads from BOTH networks — Ad Manager's demo",
+    "  network first, AdMob's demo unit behind it in the priority list. tv debug still serves nothing",
+    "  at all, because tv.debug_ads_enabled is false; its test units are filled in below, so flipping",
+    "  that one key is all it takes to exercise them. No debug build can request a live unit from",
+    "  either network, on either app.",
+    "",
+    "AD MANAGER UNITS — network 22853635592, ad unit tree Inoxtv-app-Ad-Units:",
+    "  A GAM ad unit is a PATH, /<networkCode>/<unitName>. It is not a ca-app-pub-... ID and it",
+    "    belongs to no AdMob unit. Every adx.live below is that network and that tree plus the slot's",
+    "    own name, so the path here and the unit in the console stay in step by construction.",
+    "  Every slot needs its OWN GAM unit, created with the MATCHING format. A path carries no format,",
+    "    so a banner unit pasted into unlock_rew returns no fill and raises no error — it simply falls",
+    "    through to AdMob, which looks identical to Ad Manager having no demand. If Ad Manager never",
+    "    seems to fill, this is the first thing to check.",
+    "  The app ID is the same for both networks and is already compiled in (see mobile_app_id /",
+    "    tv_app_id below): AdMob and Ad Manager share one app record when the accounts are linked.",
+    "  A brand-new GAM unit returns no fill for a few hours up to ~24h after creation. Not a bug.",
+    "    Wait it out before concluding anything.",
+    "  Every adx.test below already holds the matching demo path, so a debug build walks the real GAM",
+    "    code path — request, fill, show — without touching your Ad Manager account:",
+    "      rewarded .......... /21775744923/example/rewarded",
+    "      interstitial ...... /21775744923/example/interstitial",
+    "      adaptive banner ... /21775744923/example/adaptive-banner",
+    "      app open .......... /21775744923/example/app-open",
+    "    Those paths belong to Google's demo network, 21775744923, not to yours — which is exactly why",
+    "    the network-code check is applied to live and never to test: a test value is used as written,",
+    "    so the demo paths keep working if this file is ever copied to another account. AdMob's test",
+    "    unit still sits behind it in the priority list, so a slot whose adx test path cannot fill falls",
+    "    back rather than going blank.",
+    "",
+    "mobile_app_id / tv_app_id are DOCUMENTATION and are already compiled into the app. The app",
+    "  never reads an app ID from a remote file: initialisation happens before this file can be",
+    "  fetched, and a remote switch for the app identity would be a way to break every install at",
+    "  once. Unit IDs are validated against a compiled publisher / network check, never against this",
+    "  file — a document checked against itself is not checked. Neither ID is a secret: both ship in",
+    "  plain text inside every APK. Never put anything that authenticates in this file (AdMob API or",
+    "  OAuth credentials, service accounts, keys).",
+    "",
+    "reward_gates: comma list from movies,shows,search,record,addplaylist,theme. Empty = no gate is",
+    "  active even when unlock_rew is served, so every feature stays free.",
+    "reward_unlock_hours: clamped to 1-720 in code. 0, negative, or unparseable falls back to 6 — an",
+    "  unclamped 0 would re-lock the feature the instant the ad finished. mobile and tv hold this",
+    "  value independently and are both 1 hour today.",
+    "  Nothing here can lock a user out: if no rewarded ad can be served by ANY source in the",
+    "    priority list, the gate opens and the feature is free. Never a paywall.",
+    "",
+    "TV: the TV app serves the rewarded ad and nothing else. Its host returns null for attachBanner",
+    "  and passes interstitials straight through, so a banner or interstitial slot added to tv.slots",
+    "  would be parsed and then ignored. Google's own GMA Next-Gen SDK page states that the SDK 'does",
+    "  not support Android TV', which is why tv.slots.unlock_rew.adx.enabled is FALSE by default: TV",
+    "  keeps serving the AdMob rewarded unit it uses today, with no behaviour change. Its GAM path and",
+    "  its GAM demo path are both filled in below, so flipping that one key — no release, no other",
+    "  edit — is the whole change if Ad Manager is ever seen filling on a real box.",
+    "",
+    "SLOT KEY vs name — two naming systems, joined only by the unit ID:",
+    "  the slot KEY (player_fullscreen_banner) is what the app's code reads. Renaming it is a code",
+    "    change, so it never changes.",
+    "  name (INX_MOB_BAN_PLAYER_FULLSCREEN) is only the label typed into the console. NO code reads",
+    "    it. Rename it in the console whenever you like — the app cannot tell. It sits here so this",
+    "    file alone tells you which console unit's ID belongs in which live field.",
+    "  format = what to pick at the console's 'Ad format' step, and fixed when the unit is created: a",
+    "    unit made as a Banner can never serve a rewarded request. phase and publisher are rollout",
+    "    documentation, same as the app IDs.",
+    "  _note = which screens the slot actually serves, so this file answers that without reading code.",
+    "",
+    "THIS FILE HOLDS EXACTLY WHAT THE APP ASKS FOR — 9 mobile keys, 1 TV key, nothing else. The 9",
+    "  mobile keys are the same 9 in MobileAdMobHost.slotFallbacks, one for one. Adding a key the code",
+    "  does not read does nothing: it is parsed, stored and never looked up. A new placement is always",
+    "  code first, then a key here — never a key here in the hope it turns on.",
+    "",
+    "TWO REWARDED UNITS, NOT ONE. mobile.slots.unlock_rew and tv.slots.unlock_rew are different",
+    "  inventory under different AdMob apps, and their Ad Manager units belong to different GAM",
+    "  inventory again. Pasting the same unit into both would mis-attribute every impression in the",
+    "  account. The demo units are legitimately the same string in both — only the live units differ.",
+    "",
+    "PUBLISHING: edit this file in the project folder, then copy it to the inoxtv-config repo",
+    "  unchanged. Do not edit the hosted copy directly, and do not write this file from inside",
+    "  inoxtv-config — the project copy is the one that gets reviewed and committed."
+  ],
+
+  "version": 1,
+  "updated": "2026-10-08",
+  "publisher": "6161953663322185",
+
+  "master_enabled": true,
+  "debug_ads_enabled": true,
+  "allow_test_units_in_release": false,
+
+  "priority": ["adx", "admob"],
+
+  "sources": {
+    "adx": {
+      "master_enabled": true,
+      "debug_ads_enabled": true,
+      "allow_test_units_in_release": false
+    },
+    "admob": {
+      "master_enabled": true,
+      "debug_ads_enabled": true,
+      "allow_test_units_in_release": false
+    }
+  },
+
+  "mobile_app_id": "ca-app-pub-6161953663322185~4018635620",
+  "tv_app_id": "ca-app-pub-6161953663322185~4860944005",
+
+  "mobile": {
+    "master_enabled": true,
+    "debug_ads_enabled": true,
+
+    "reward_gates": "movies,shows,search,record,addplaylist,theme",
+    "reward_unlock_hours": 1,
+
+    "slots": {
+      "unlock_rew": {
+        "name": "INX_MOB_REW_UNLOCK",
+        "format": "Rewarded",
+        "phase": 1,
+        "enabled": true,
+        "adx": {
+          "enabled": true,
+          "live": "/22853635592/Inoxtv-app-Ad-Units/INX_MOB_REW_UNLOCK",
+          "test": "/21775744923/example/rewarded"
+        },
+        "admob": {
+          "enabled": true,
+          "live": "ca-app-pub-6161953663322185/2263704786",
+          "test": "ca-app-pub-3940256099942544/5224354917"
+        },
+        "_note": "The feature gates listed in reward_gates. Never a paywall: if neither source can serve it the gate opens rather than locking the user out. The only slot where a missing ad is visible to the user as something other than a missing ad."
+      },
+      "app_open": {
+        "name": "INX_MOB_APPOPEN_RESUME",
+        "format": "App Open",
+        "phase": 1,
+        "enabled": true,
+        "min_interval_s": 240,
+        "adx": {
+          "enabled": true,
+          "live": "/22853635592/Inoxtv-app-Ad-Units/INX_MOB_APPOPEN_RESUME",
+          "test": "/21775744923/example/app-open"
+        },
+        "admob": {
+          "enabled": true,
+          "live": "ca-app-pub-6161953663322185/4380450867",
+          "test": "ca-app-pub-3940256099942544/9257395921"
+        },
+        "_note": "Shown on a real return to the foreground only. Never on first launch, never on rotation, never on internal navigation, and never over a return the app itself asked for (external player, file picker, consent form, store)."
+      },
+      "fullscreen_exit_int": {
+        "name": "INX_MOB_INT_FULLSCREEN_EXIT",
+        "format": "Interstitial",
+        "phase": 1,
+        "enabled": true,
+        "max_per_session": 4,
+        "adx": {
+          "enabled": true,
+          "live": "/22853635592/Inoxtv-app-Ad-Units/INX_MOB_INT_FULLSCREEN_EXIT",
+          "test": "/21775744923/example/interstitial"
+        },
+        "admob": {
+          "enabled": true,
+          "live": "ca-app-pub-6161953663322185/3067369199",
+          "test": "ca-app-pub-3940256099942544/1033173712"
+        },
+        "_note": "Leaving a fullscreen player — live TV, movies, shows. The player exits first and the ad opens over the screen behind it, so the user is never held in fullscreen waiting on an ad. max_per_session 0 or missing means never."
+      },
+      "section_switch_int": {
+        "name": "INX_MOB_INT_SECTION_SWITCH",
+        "format": "Interstitial",
+        "phase": 2,
+        "enabled": false,
+        "max_per_session": 3,
+        "adx": {
+          "enabled": true,
+          "live": "/22853635592/Inoxtv-app-Ad-Units/INX_MOB_INT_SECTION_SWITCH",
+          "test": "/21775744923/example/interstitial"
+        },
+        "admob": {
+          "enabled": true,
+          "live": "ca-app-pub-6161953663322185/9759051425",
+          "test": "ca-app-pub-3940256099942544/1033173712"
+        },
+        "_note": "IMPLEMENTED but switched off. Flip enabled to true to start showing it, no release needed. Fires only on a real sidebar section change, never on re-selecting the section already open."
+      },
+      "livetv_browse_banner": {
+        "name": "INX_MOB_BAN_LIVETV_BROWSE",
+        "format": "Banner (adaptive anchored)",
+        "phase": 1,
+        "console_refresh_s": 60,
+        "enabled": true,
+        "adx": {
+          "enabled": true,
+          "live": "/22853635592/Inoxtv-app-Ad-Units/INX_MOB_BAN_LIVETV_BROWSE",
+          "test": "/21775744923/example/adaptive-banner"
+        },
+        "admob": {
+          "enabled": true,
+          "live": "ca-app-pub-6161953663322185/1880561404",
+          "test": "ca-app-pub-3940256099942544/9214589741"
+        },
+        "_note": "The live-TV BROWSE band only, at 100 dp: the channel list, the guide and the small preview player. Live TV in FULLSCREEN is NOT this unit — it is player_fullscreen_banner, at 50 dp. They are still the same physical view (ad_band_live_tv), and FullscreenModeBinder rebinds it from one slot to the other on every fullscreen toggle, which is why toggling costs one ad request. Consequence for reading this file: impressions here are browse impressions only."
+      },
+      "catalog_browse_banner": {
+        "name": "INX_MOB_BAN_CATALOG_BROWSE",
+        "format": "Banner (adaptive anchored)",
+        "phase": 1,
+        "console_refresh_s": 60,
+        "enabled": true,
+        "adx": {
+          "enabled": true,
+          "live": "/22853635592/Inoxtv-app-Ad-Units/INX_MOB_BAN_CATALOG_BROWSE",
+          "test": "/21775744923/example/adaptive-banner"
+        },
+        "admob": {
+          "enabled": true,
+          "live": "ca-app-pub-6161953663322185/9567479734",
+          "test": "ca-app-pub-3940256099942544/9214589741"
+        },
+        "_note": "Movies, Shows, Recordings and My List browse bands."
+      },
+      "player_fullscreen_banner": {
+        "name": "INX_MOB_BAN_PLAYER_FULLSCREEN",
+        "format": "Banner (adaptive anchored)",
+        "phase": 1,
+        "console_refresh_s": 60,
+        "enabled": true,
+        "adx": {
+          "enabled": true,
+          "live": "/22853635592/Inoxtv-app-Ad-Units/INX_MOB_BAN_PLAYER_FULLSCREEN",
+          "test": "/21775744923/example/adaptive-banner"
+        },
+        "admob": {
+          "enabled": true,
+          "live": "ca-app-pub-6161953663322185/1130586516",
+          "test": "ca-app-pub-3940256099942544/9214589741"
+        },
+        "_note": "Every band drawn over a video, at 50 dp: live TV in fullscreen (which arrives here when the mode toggles — see livetv_browse_banner), the Movies and Shows fullscreen players, and the recording player. Highest-volume placement in the app, and the only one that shares a surface with the picture."
+      },
+      "onboarding_banner": {
+        "name": "INX_MOB_BAN_ONBOARDING",
+        "format": "Banner (adaptive anchored)",
+        "phase": 1,
+        "console_refresh_s": 60,
+        "enabled": true,
+        "adx": {
+          "enabled": true,
+          "live": "/22853635592/Inoxtv-app-Ad-Units/INX_MOB_BAN_ONBOARDING",
+          "test": "/21775744923/example/adaptive-banner"
+        },
+        "admob": {
+          "enabled": true,
+          "live": "ca-app-pub-6161953663322185/5562882040",
+          "test": "ca-app-pub-3940256099942544/9214589741"
+        },
+        "_note": "The whole playlist-setup flow — welcome home, the type picker, and the M3U, Xtream, Stalker and EPG form pages. Six screens on one unit on purpose: they are the lowest-volume placements in the app and the user sees exactly one at a time, so splitting them would divide the impressions that teach the network what this inventory is worth. The delete-confirm page carries no band and never will, because a banner beside a destructive button is a mis-tap trap."
+      },
+      "playlist_processing_banner": {
+        "name": "INX_MOB_BAN_PLAYLIST_PROCESSING",
+        "format": "Banner (adaptive anchored)",
+        "phase": 1,
+        "console_refresh_s": 60,
+        "enabled": true,
+        "adx": {
+          "enabled": true,
+          "live": "/22853635592/Inoxtv-app-Ad-Units/INX_MOB_BAN_PLAYLIST_PROCESSING",
+          "test": "/21775744923/example/adaptive-banner"
+        },
+        "admob": {
+          "enabled": true,
+          "live": "ca-app-pub-6161953663322185/4193960055",
+          "test": "ca-app-pub-3940256099942544/9214589741"
+        },
+        "_note": "The playlist-processing screen — the longest-dwell screen in the app, because importing a large M3U or Xtream playlist takes minutes. On its own unit rather than sharing onboarding_banner's because the network prices a unit on the behaviour it sees, and mixing a several-minute screen in with six screens the user passes through in seconds would teach it the wrong thing about both."
+      }
+    }
+  },
+
+  "tv": {
+    "master_enabled": true,
+    "debug_ads_enabled": false,
+
+    "reward_gates": "movies,shows,search,record,addplaylist,theme",
+    "reward_unlock_hours": 1,
+
+    "slots": {
+      "unlock_rew": {
+        "name": "INX_TV_REW_UNLOCK",
+        "format": "Rewarded",
+        "phase": 1,
+        "enabled": true,
+        "adx": {
+          "enabled": false,
+          "live": "/22853635592/Inoxtv-app-Ad-Units/INX_TV_REW_UNLOCK",
+          "test": "/21775744923/example/rewarded"
+        },
+        "admob": {
+          "enabled": true,
+          "live": "ca-app-pub-6161953663322185/3850149008",
+          "test": "ca-app-pub-3940256099942544/5224354917"
+        },
+        "_note": "The ONLY ad the TV app serves, by design. TV has no banner, no app-open and no interstitial, so a slot added here in those formats would be parsed and then ignored. adx.enabled is false because Google documents the Next-Gen SDK as not supporting Android TV — TV stays on the AdMob unit it serves today. Its Ad Manager path and demo path are filled in anyway, so flipping this one key is the whole change if a real box is seen filling from Ad Manager."
+      }
+    }
+  }
+}
