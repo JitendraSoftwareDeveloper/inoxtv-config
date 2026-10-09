@@ -126,7 +126,7 @@
     "    code path — request, fill, show — without touching your Ad Manager account:",
     "      rewarded .......... /21775744923/example/rewarded",
     "      interstitial ...... /21775744923/example/interstitial",
-    "      adaptive banner ... /21775744923/example/adaptive-banner",
+    "      adaptive banner ... /21775744923/example/fixed-size-banner",
     "      app open .......... /21775744923/example/app-open",
     "    Those paths belong to Google's demo network, 21775744923, not to yours — which is exactly why",
     "    the network-code check is applied to live and never to test: a test value is used as written,",
@@ -196,7 +196,7 @@
 
   "sources": {
     "adx": {
-      "master_enabled": false,
+      "master_enabled": true,
       "debug_ads_enabled": true,
       "allow_test_units_in_release": false
     },
@@ -291,7 +291,7 @@
       },
       "livetv_browse_banner": {
         "name": "INX_MOB_BAN_LIVETV_BROWSE",
-        "format": "Banner (adaptive anchored)",
+        "format": "Banner (fixed-size-banner)",
         "phase": 1,
         "console_refresh_s": 60,
         "enabled": true,
@@ -309,7 +309,7 @@
       },
       "catalog_browse_banner": {
         "name": "INX_MOB_BAN_CATALOG_BROWSE",
-        "format": "Banner (adaptive anchored)",
+        "format": "Banner (fixed-size-banner)",
         "phase": 1,
         "console_refresh_s": 60,
         "enabled": true,
@@ -327,10 +327,10 @@
       },
       "player_fullscreen_banner": {
         "name": "INX_MOB_BAN_PLAYER_FULLSCREEN",
-        "format": "Banner (adaptive anchored)",
+        "format": "Banner (fixed-size-banner)",
         "phase": 1,
         "console_refresh_s": 60,
-        "enabled": true,
+        "enabled": false,
         "adx": {
           "enabled": true,
           "live": "/22853635592/Inoxtv-app-Ad-Units/INX_MOB_BAN_PLAYER_FULLSCREEN",
@@ -345,7 +345,7 @@
       },
       "onboarding_banner": {
         "name": "INX_MOB_BAN_ONBOARDING",
-        "format": "Banner (adaptive anchored)",
+        "format": "Banner (fixed-size-banner)",
         "phase": 1,
         "console_refresh_s": 60,
         "enabled": true,
@@ -363,7 +363,7 @@
       },
       "playlist_processing_banner": {
         "name": "INX_MOB_BAN_PLAYLIST_PROCESSING",
-        "format": "Banner (adaptive anchored)",
+        "format": "Banner (fixed-size-banner)",
         "phase": 1,
         "console_refresh_s": 60,
         "enabled": true,
