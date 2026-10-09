@@ -330,7 +330,7 @@
         "format": "Banner (fixed-size-banner)",
         "phase": 1,
         "console_refresh_s": 60,
-        "enabled": false,
+        "enabled": true,
         "adx": {
           "enabled": true,
           "live": "/22853635592/Inoxtv-app-Ad-Units/INX_MOB_BAN_PLAYER_FULLSCREEN",
