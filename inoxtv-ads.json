@@ -50,7 +50,7 @@
     "  top level ..... master_enabled, debug_ads_enabled, allow_test_units_in_release, priority,",
     "                  sources, mobile, tv",
     "  sources.<src> . master_enabled, debug_ads_enabled, allow_test_units_in_release",
-    "  per platform .. master_enabled, debug_ads_enabled, reward_gates, reward_unlock_hours, slots",
+    "  per platform .. master_enabled, debug_ads_enabled, reward_gates, reward_unlock_minutes, slots",
     "  per slot ...... enabled, min_interval_s (app_open only), max_per_session (interstitial only),",
     "                  adx.enabled, adx.live, adx.test, admob.enabled, admob.live, admob.test",
     "  NOT read ...... version, updated, publisher, mobile_app_id, tv_app_id, name, format, phase,",
@@ -126,7 +126,10 @@
     "    code path — request, fill, show — without touching your Ad Manager account:",
     "      rewarded .......... /21775744923/example/rewarded",
     "      interstitial ...... /21775744923/example/interstitial",
-    "      adaptive banner ... /21775744923/example/fixed-size-banner",
+    "      full-width banner . /21775744923/example/fixed-size-banner",
+    "        (Google publishes this demo path as the 'fixed-size' one, but the log shows it filling the",
+    "         app's full-width adaptive requests, while the demo path named 'adaptive-banner' returns",
+    "         no fill for every request. The path name does not decide what it serves; this one fills.)",
     "      app open .......... /21775744923/example/app-open",
     "    Those paths belong to Google's demo network, 21775744923, not to yours — which is exactly why",
     "    the network-code check is applied to live and never to test: a test value is used as written,",
@@ -144,9 +147,16 @@
     "",
     "reward_gates: comma list from movies,shows,search,record,addplaylist,theme. Empty = no gate is",
     "  active even when unlock_rew is served, so every feature stays free.",
-    "reward_unlock_hours: clamped to 1-720 in code. 0, negative, or unparseable falls back to 6 — an",
-    "  unclamped 0 would re-lock the feature the instant the ad finished. mobile and tv hold this",
-    "  value independently and are both 1 hour today.",
+    "reward_unlock_minutes: how long one rewarded view keeps a feature unlocked, in minutes. THE ONLY",
+    "  KEY that sets this: 1 is a minute, 60 is an hour, 360 is six hours. Fractions are accepted.",
+    "  Clamped in code to 1 .. 43200 minutes (30 days), and anything under the floor is raised to it,",
+    "  so 0.5 is served as one minute. Absent, 0, negative or unparseable falls back to 360 (6 hours)",
+    "  — an unclamped 0 would re-lock the feature the instant the ad finished.",
+    "  reward_unlock_hours is NO LONGER READ. It is ignored like any other unknown key, so a file that",
+    "    still carries it gets 360 minutes, not the hours it names: there is one spelling of this value",
+    "    now, and this is it. Check for a leftover reward_unlock_hours if the window ever looks wrong.",
+    "  mobile and tv hold this value independently and are both 1 minute today, which is a TESTING",
+    "  value: raise it (60 = 1 hour, 360 = 6 hours) before the build that ships to users.",
     "  Nothing here can lock a user out: if no rewarded ad can be served by ANY source in the",
     "    priority list, the gate opens and the feature is free. Never a paywall.",
     "",
@@ -215,7 +225,7 @@
     "debug_ads_enabled": true,
 
     "reward_gates": "movies,shows,search,record,addplaylist,theme",
-    "reward_unlock_hours": 1,
+    "reward_unlock_minutes": 1,
 
     "slots": {
       "unlock_rew": {
@@ -291,7 +301,7 @@
       },
       "livetv_browse_banner": {
         "name": "INX_MOB_BAN_LIVETV_BROWSE",
-        "format": "Banner (fixed-size-banner)",
+        "format": "Banner (adaptive, full width)",
         "phase": 1,
         "console_refresh_s": 60,
         "enabled": true,
@@ -309,7 +319,7 @@
       },
       "catalog_browse_banner": {
         "name": "INX_MOB_BAN_CATALOG_BROWSE",
-        "format": "Banner (fixed-size-banner)",
+        "format": "Banner (adaptive, full width)",
         "phase": 1,
         "console_refresh_s": 60,
         "enabled": true,
@@ -327,7 +337,7 @@
       },
       "player_fullscreen_banner": {
         "name": "INX_MOB_BAN_PLAYER_FULLSCREEN",
-        "format": "Banner (fixed-size-banner)",
+        "format": "Banner (adaptive, full width)",
         "phase": 1,
         "console_refresh_s": 60,
         "enabled": true,
@@ -345,7 +355,7 @@
       },
       "onboarding_banner": {
         "name": "INX_MOB_BAN_ONBOARDING",
-        "format": "Banner (fixed-size-banner)",
+        "format": "Banner (adaptive, full width)",
         "phase": 1,
         "console_refresh_s": 60,
         "enabled": true,
@@ -363,7 +373,7 @@
       },
       "playlist_processing_banner": {
         "name": "INX_MOB_BAN_PLAYLIST_PROCESSING",
-        "format": "Banner (fixed-size-banner)",
+        "format": "Banner (adaptive, full width)",
         "phase": 1,
         "console_refresh_s": 60,
         "enabled": true,
@@ -387,7 +397,7 @@
     "debug_ads_enabled": true,
 
     "reward_gates": "movies,shows,search,record,addplaylist,theme",
-    "reward_unlock_hours": 1,
+    "reward_unlock_minutes": 1,
 
     "slots": {
       "unlock_rew": {
