@@ -345,7 +345,7 @@
         "adx": {
           "enabled": true,
           "live": "/22853635592/Inoxtv-app-Ad-Units/INX_MOB_BAN_PLAYER_FULLSCREEN",
-          "test": "/21775744923/example/fixed-size-banner"
+          "test": "/21775744923/example/adaptive-banner"
         },
         "admob": {
           "enabled": true,
