@@ -1,9 +1,9 @@
 {
-  "minVersionCode": 10009,
-  "minVersionName": "1.0.9",
+  "minVersionCode": 10100,
+  "minVersionName": "1.1.0",
   "updateUrl": "market://details?id=in.inoxtv.mobile",
   "updateUrlTv": "market://details?id=in.inoxtv.tv",
   "updateUrlFallback": "https://inoxtv.com",
-  "message": "Please update with 1.0.9 to protect from miss-use this app. Hide/block/manage/sort channels/groups and More new features added",
+  "message": "Please Update with 1.1.0, Inhancing App Security, Too Frequently Update may comes.",
   "enabled": true
 }
