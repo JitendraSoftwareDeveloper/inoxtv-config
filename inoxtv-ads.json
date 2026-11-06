@@ -233,7 +233,7 @@
         "name": "INX_MOB_REW_UNLOCK",
         "format": "Rewarded",
         "phase": 1,
-        "enabled": true,
+        "enabled": false,
         "adx": {
           "enabled": true,
           "live": "/22853635592/Inoxtv-app-Ad-Units/INX_MOB_REW_UNLOCK",
@@ -268,7 +268,7 @@
         "name": "INX_MOB_INT_FULLSCREEN_EXIT",
         "format": "Interstitial",
         "phase": 1,
-        "enabled": true,
+        "enabled": false,
         "max_per_session": 500,
         "adx": {
           "enabled": true,
@@ -341,7 +341,7 @@
         "format": "Banner (adaptive, full width)",
         "phase": 1,
         "console_refresh_s": 60,
-        "enabled": true,
+        "enabled": false,
         "adx": {
           "enabled": true,
           "live": "/22853635592/Inoxtv-app-Ad-Units/INX_MOB_BAN_PLAYER_FULLSCREEN",
@@ -394,7 +394,7 @@
   },
 
   "tv": {
-    "master_enabled": true,
+    "master_enabled": false,
     "debug_ads_enabled": false,
 
     "reward_gates": "movies,shows,search,record,addplaylist,theme",
