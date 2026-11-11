@@ -394,7 +394,7 @@
   },
 
   "tv": {
-    "master_enabled": false,
+    "master_enabled": true,
     "debug_ads_enabled": false,
 
     "reward_gates": "movies,shows,search,record,addplaylist,theme",
