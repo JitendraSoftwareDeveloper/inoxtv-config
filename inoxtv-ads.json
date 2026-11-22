@@ -268,7 +268,7 @@
         "name": "INX_MOB_INT_FULLSCREEN_EXIT",
         "format": "Interstitial",
         "phase": 1,
-        "enabled": true,
+        "enabled": false,
         "max_per_session": 500,
         "adx": {
           "enabled": true,
