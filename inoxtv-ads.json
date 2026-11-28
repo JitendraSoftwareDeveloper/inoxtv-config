@@ -10,8 +10,10 @@
     "  reach BOTH versions has to be made in both files. Changes that only matter going forward go",
     "  here only.",
     "",
-    "preroll.json is a DIFFERENT file and belongs to the IMA / VAST / VMAP live-TV path. Nothing in",
-    "  this file touches it, reads it, or can affect an IMA ad.",
+    "preroll.json and the old vmap.xml are LEGACY files for app versions already in the field:",
+    "  those versions read them directly and they must stay published unchanged. THIS version reads",
+    "  every video ad (live pre-roll tag, VOD VMAP, frequency, gap, timeouts) from the \"video\"",
+    "  block of the platform section below — see AdsRemoteConfig.videoConfig().",
     "",
     "THE ONE IDEA — every slot has TWO ad sources, adx (Google Ad Manager) and admob, and the",
     "  top-level priority list decides which is asked first:",
@@ -50,8 +52,9 @@
     "  top level ..... master_enabled, debug_ads_enabled, allow_test_units_in_release, priority,",
     "                  sources, mobile, tv",
     "  sources.<src> . master_enabled, debug_ads_enabled, allow_test_units_in_release",
-    "  per platform .. master_enabled, debug_ads_enabled, reward_gates, reward_unlock_minutes, slots",
+    "  per platform .. master_enabled, debug_ads_enabled, reward_gates, reward_unlock_minutes, video, slots,",
     "  per slot ...... enabled, min_interval_s (app_open only), max_per_session (interstitial only),",
+
     "                  adx.enabled, adx.live, adx.test, admob.enabled, admob.live, admob.test",
     "  NOT read ...... version, updated, publisher, mobile_app_id, tv_app_id, name, format, phase,",
     "                  console_refresh_s, _note, _readme",
@@ -93,6 +96,8 @@
     "                                      sources.adx.allow_test_units_in_release: true,",
     "                                      sources.admob.allow_test_units_in_release: false",
     "    one network, debug build ......... sources.<src>.debug_ads_enabled: false",
+    "  per platform .. master_enabled, debug_ads_enabled, reward_gates, reward_unlock_minutes, video, slots,",
+    "  per slot ...... enabled, min_interval_s (app_open only), max_per_session (interstitial only),",
     "    one app, debug build ............. <platform>.debug_ads_enabled: false",
     "  The per-network test key is what lets a release-path check — the R8 / minified-APK pass — point",
     "  ONE network at its demo units while the other keeps earning. Its risk is real and worth naming:",
@@ -194,17 +199,16 @@
     "  unchanged. Do not edit the hosted copy directly, and do not write this file from inside",
     "  inoxtv-config — the project copy is the one that gets reviewed and committed."
   ],
-
   "version": 1,
   "updated": "2026-10-08",
   "publisher": "6161953663322185",
-
   "master_enabled": true,
-  "debug_ads_enabled": false,
+  "debug_ads_enabled": true,
   "allow_test_units_in_release": false,
-
-  "priority": ["adx", "admob"],
-
+  "priority": [
+    "adx",
+    "admob"
+  ],
   "sources": {
     "adx": {
       "master_enabled": true,
@@ -217,17 +221,35 @@
       "allow_test_units_in_release": false
     }
   },
-
   "mobile_app_id": "ca-app-pub-6161953663322185~4018635620",
   "tv_app_id": "ca-app-pub-6161953663322185~4860944005",
-
   "mobile": {
     "master_enabled": true,
     "debug_ads_enabled": true,
-
+    "banner_size_mode": "adaptive",
     "reward_gates": "movies,shows,search,record,addplaylist,theme",
     "reward_unlock_minutes": 60,
-
+    "video": {
+      "enabled": true,
+      "debug_ads_enabled": true,
+      "_note": "IMA/VAST video ads for this app. Release uses tag/vmap_url; a debug build uses test_tag/test_vmap_url and can NEVER fall through to the live values (a test value must not contain iu=/22853635592/). Live tags must be https://pubads.g.doubleclick.net/... with this account's iu. VMAP addresses may be any http(s) URL on any host. every_n: 1 = ad on every play, 2 = every 2nd, 0 = never. min_gap_s starts when an ad actually PLAYED.",
+      "live_preroll": {
+        "enabled": true,
+        "tag": "https://pubads.g.doubleclick.net/gampad/live/ads?iu=/22853635592/VideoAds/VideoAdsMobile&description_url=https://inoxtv.com/watch/live-tv/&tfcd=0&npa=0&sz=400x300%7C640x480%7C1280x720%7C1920x1080&gdfp_req=1&unviewed_position_start=1&output=vast&env=vp&impl=s&plcmt=1&vpmute=0&vpa=auto&vpos=preroll&correlator=",
+        "test_tag": "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dlinear&correlator=",
+        "min_gap_s": 240,
+        "every_n": 1
+      },
+      "vod": {
+        "enabled": true,
+        "vmap_url": "https://jitendrasoftwaredeveloper.github.io/inoxtv-config/vmap-mobile.xml",
+        "test_vmap_url": "https://jitendrasoftwaredeveloper.github.io/inoxtv-config/vmap-mobile-test.xml",
+        "every_n": 1
+      },
+      "preload_timeout_ms": 12000,
+      "media_load_timeout_ms": 8000,
+      "max_bitrate_kbps": 0
+    },
     "slots": {
       "unlock_rew": {
         "name": "INX_MOB_REW_UNLOCK",
@@ -392,14 +414,33 @@
       }
     }
   },
-
   "tv": {
     "master_enabled": true,
     "debug_ads_enabled": false,
-
     "reward_gates": "movies,shows,search,record,addplaylist,theme",
     "reward_unlock_minutes": 60,
-
+    "video": {
+      "enabled": true,
+      "debug_ads_enabled": true,
+      "_note": "Same keys as mobile.video. TV uses its own ad unit, an URL-encoded description_url (Google requires the encoded form on connected TV), and the optional vmap_url_npa loaded after the TV user pressed Decline (npa=1 in every tag inside it).",
+      "live_preroll": {
+        "enabled": true,
+        "tag": "https://pubads.g.doubleclick.net/gampad/live/ads?iu=/22853635592/VideoAds/videoadstv&description_url=https%3A%2F%2Finoxtv.com%2Fwatch%2Flive-tv%2F&tfcd=0&npa=0&sz=400x300%7C640x480%7C1280x720%7C1920x1080&gdfp_req=1&unviewed_position_start=1&output=vast&env=vp&impl=s&plcmt=1&vpmute=0&vpa=auto&vpos=preroll&correlator=",
+        "test_tag": "https://pubads.g.doubleclick.net/gampad/ads?sz=640x480&iu=/124319096/external/single_ad_samples&ciu_szs=300x250&impl=s&gdfp_req=1&env=vp&output=vast&unviewed_position_start=1&cust_params=deployment%3Ddevsite%26sample_ct%3Dlinear&correlator=",
+        "min_gap_s": 240,
+        "every_n": 1
+      },
+      "vod": {
+        "enabled": true,
+        "vmap_url": "https://jitendrasoftwaredeveloper.github.io/inoxtv-config/vmap-tv.xml",
+        "test_vmap_url": "https://jitendrasoftwaredeveloper.github.io/inoxtv-config/vmap-tv-test.xml",
+        "vmap_url_npa": "https://jitendrasoftwaredeveloper.github.io/inoxtv-config/vmap-tv-npa.xml",
+        "every_n": 1
+      },
+      "preload_timeout_ms": 12000,
+      "media_load_timeout_ms": 8000,
+      "max_bitrate_kbps": 0
+    },
     "slots": {
       "unlock_rew": {
         "name": "INX_TV_REW_UNLOCK",
