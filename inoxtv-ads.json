@@ -331,7 +331,7 @@
         "adx": {
           "enabled": true,
           "live": "/22853635592/Inoxtv-app-Ad-Units/INX_MOB_BAN_LIVETV_BROWSE",
-          "test": "ca-app-pub-3940256099942544/9214589741"
+          "test": "/21775744923/example/fixed-size-banner"
         },
         "admob": {
           "enabled": true,
@@ -349,7 +349,7 @@
         "adx": {
           "enabled": true,
           "live": "/22853635592/Inoxtv-app-Ad-Units/INX_MOB_BAN_CATALOG_BROWSE",
-          "test": "ca-app-pub-3940256099942544/9214589741"
+          "test": "/21775744923/example/fixed-size-banner"
         },
         "admob": {
           "enabled": true,
@@ -367,7 +367,7 @@
         "adx": {
           "enabled": true,
           "live": "/22853635592/Inoxtv-app-Ad-Units/INX_MOB_BAN_PLAYER_FULLSCREEN",
-          "test": "ca-app-pub-3940256099942544/9214589741"
+          "test": "/21775744923/example/fixed-size-banner"
         },
         "admob": {
           "enabled": true,
@@ -385,7 +385,7 @@
         "adx": {
           "enabled": true,
           "live": "/22853635592/Inoxtv-app-Ad-Units/INX_MOB_BAN_ONBOARDING",
-          "test": "ca-app-pub-3940256099942544/9214589741"
+          "test": "/21775744923/example/fixed-size-banner"
         },
         "admob": {
           "enabled": true,
@@ -403,7 +403,7 @@
         "adx": {
           "enabled": true,
           "live": "/22853635592/Inoxtv-app-Ad-Units/INX_MOB_BAN_PLAYLIST_PROCESSING",
-          "test": "ca-app-pub-3940256099942544/9214589741"
+          "test": "/21775744923/example/fixed-size-banner"
         },
         "admob": {
           "enabled": true,
